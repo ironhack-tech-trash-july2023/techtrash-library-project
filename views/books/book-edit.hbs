@@ -8,7 +8,11 @@
     <label> Author:
         <select name="author">
             {{#each authors}}
-                <option value={{this._id}}>{{this.name}}</option>
+                {{#if this.isSelected}}
+                    <option selected value={{this._id}}>{{this.name}}</option>
+                {{else}}
+                    <option value={{this._id}}>{{this.name}}</option>
+                {{/if}}
             {{/each}}
         </select>
     </label>

@@ -69,14 +69,31 @@ router.get('/books/:bookId/edit', async (req, res, next) => {
 
     try {
         const bookDetails = await Book.findById(bookId);
-        const authors = await Author.find();
+        const authorsFromDB = await Author.find();
+
+        const authorsArr = authorsFromDB.map( authorObj => {
+            
+            // for each element of the array, we check if the id of this author (authorObj._id) is the same as the author of the book (bookDetails.author)
+            // note: to compare 2 objectId's, this will not work `authorObj._id === bookDetails.author`
+            // more info: https://stackoverflow.com/a/59776165/11298742
+            const isSelected = authorObj._id.equals(bookDetails.author);
+
+            // now, we return an object which contains the same properties as the original object, plus a property "isSelected"
+            // we use the spread operator (example: https://stackblitz.com/edit/js-6tv5x7?file=index.js)
+            // because mongoose does not return plain objects, we also .toObject(): https://stackoverflow.com/a/18554416/11298742
+            return {
+                ...authorObj.toObject(),
+                isSelected
+            }
+        });
 
         const data = { 
             book: bookDetails, 
-            authors: authors 
+            authors: authorsArr 
         }
 
         res.render('books/book-edit.hbs', data)
+
     } catch(error){
         next(error)
     }
