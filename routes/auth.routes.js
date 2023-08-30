@@ -46,7 +46,7 @@ router.post("/signup", (req, res, next) => {
         })
         .then( userFromDB => {
             //account created succcessfully
-            res.redirect("/user-profile");
+            res.redirect("/login");
         })
         .catch( error => {
             console.log("error creating user account... ", error);
@@ -103,11 +103,22 @@ router.post('/login', (req, res, next) => {
 
 
 
+//POST /logout
+router.post('/logout', (req, res, next) => {
+    req.session.destroy(err => {
+        if (err) next(err);
+        res.redirect('/');
+    });
+});
+
+
+//GET /user-profile
 router.get("/user-profile", (req, res, next) => {
 
     const data = {
         userDetails: req.session.userDetails
     }
+
 
     res.render('auth/user-profile', data)
 })
